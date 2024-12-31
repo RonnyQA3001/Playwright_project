@@ -1,0 +1,4 @@
+"Status","Start Time","Stop Time","Duration in ms","Parent Suite","Suite","Sub Suite","Test Class","Test Method","Name","Description"
+"passed","Wed Dec 18 15:09:15 CST 2024","Wed Dec 18 15:09:20 CST 2024","4376","chromium","example.spec.ts","","","","has title",""
+"passed","Wed Dec 18 15:09:15 CST 2024","Wed Dec 18 15:09:20 CST 2024","4916","chromium","example.spec.ts","","","","get started link",""
+"failed","Wed Dec 18 15:09:15 CST 2024","Wed Dec 18 15:09:32 CST 2024","16892","chromium","wishlist.spec.ts","","","","Amazon Page","Search products in amazon with the code, add them and delete them"

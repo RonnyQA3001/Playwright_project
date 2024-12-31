@@ -1,0 +1,29 @@
+Item "B001PQPD8C" añadido correctamente
+Item "B0CWL6MDVL" añadido correctamente
+Item "B09TTFM6H1" añadido correctamente
+Item "B00BH4LKDY" añadido correctamente
+Item "B0DBRCXG51" añadido correctamente
+Item "B072WCC7HB" añadido correctamente
+carrito visible
+Texto recuperado: 'US$110.00US$110.00'
+Texto recuperado: 'US$124.95US$124.95'
+Texto recuperado: 'US$124.50US$124.50'
+Texto recuperado: 'US$149.48US$149.48'
+Texto recuperado: 'US$80.00US$80.00'
+Texto recuperado: 'US$260.00US$260.00'
+Suma total: 848.9456700000001
+Texto del valor de referencia: 'US$848.93'
+Número del valor de referencia: 848.93
+La suma total no coincide con el valor de referencia.
+producto eliminado
+Item "B001PQPD8C" eliminado correctamente
+producto eliminado
+Item "B0CWL6MDVL" eliminado correctamente
+producto eliminado
+Item "B09TTFM6H1" eliminado correctamente
+producto eliminado
+Item "B00BH4LKDY" eliminado correctamente
+producto eliminado
+Item "B0DBRCXG51" eliminado correctamente
+producto eliminado
+Item "B072WCC7HB" eliminado correctamente
