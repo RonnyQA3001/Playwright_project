@@ -2,6 +2,8 @@ import { expect, Locator, Page, selectors } from "@playwright/test";
 import data from '../data/items.json'
 import { parse } from "path";
 import { Selectorsproducts } from "./selectorsproducts";
+
+//Crendials have the username and password necessary to log into the amazon login.
 const credentials = JSON.parse(JSON.stringify(require("../credentials.json")))
 
 export class itemsPage {
@@ -33,7 +35,7 @@ export class itemsPage {
     }
 
 
-
+    //We fill in the blanks to be able to access the page
     async login(username:string, password:string) {
         await this.usernametxt.fill(credentials.username)
         await this.continuebtn.click()
@@ -42,53 +44,61 @@ export class itemsPage {
 
     }
 
+    //With search item we will be able to search for each item correctly and add it to the shopping cart. 
     async searchitem() {
         const selectorsproducts = new Selectorsproducts(this.page);
-
+        // For each item do each of the steps that are in the cycle "FOR".
         for (const item of data.items) {
             const itemlocator = selectorsproducts.getItemLocator(item)
+            //Fill the blank with the "ASIN" identification code given by amazon
             await this.search_field.fill(item);
+            //Click the search button
             await this.search_button.click();
             await this.page.waitForTimeout(2000);
+            //Addresses the searched item
             await itemlocator.scrollIntoViewIfNeeded();
+            //Verify if the item is visible
             await expect(itemlocator).toBeVisible();
+            //Double-click to add the item to the shopping cart.
             await itemlocator.dblclick();
             await this.page.waitForTimeout(2000);
+            //We verify that the correct amount has been added.
             await expect(this.item_added).toBeVisible();
-
-            console.log(`Item "${item}" añadido correctamente`);
+            console.log(`Item "${item}" added successfully`);
         }
     }
 
-    async obtenerNumeroElemento(page, xpath) {
-        const elemento = page.locator(xpath);
-        await expect(elemento).toBeVisible();
-        const texto = await elemento.textContent();
-        console.log(`Texto recuperado: '${texto}'`);
+    async GetElementNumber(page: Page, xpath:string): Promise<number> {
+        const element = page.locator(xpath);
+        await expect(element).toBeVisible();
+        const text = await element.textContent();
+        console.log(`Text retrieved: '${text}'`);
 
-        //.trim() Elimina espacios innecesarios o repetidos
-        if (texto && texto.trim() !== '') {
-            const numeroLimpio = texto.replace(/[^\d.,-]/g, '');
-            const numero = parseFloat(numeroLimpio);
-            //isNaN intenta convertir el parámetro pasado a un número
-            if (!isNaN(numero)) {
-                return numero;
+        //.trim() Eliminate unnecessary or repeated spaces
+        if (text && text.trim() !== '') {
+            const validNumber = text.replace(/[^\d.,-]/g, '');
+            const number = parseFloat(validNumber);
+            //isNaN attempts to convert the parameter passed to a number
+            if (!isNaN(number)) {
+                return number;
             } else {
-                console.error('Error al convertir el texto a un número.');
+                console.error('Error converting text to a number');
                 return 0;
             }
         } else {
-            console.error('No se recuperó texto o el texto está vacío.');
+            console.error('No text retrieved or text is empty');
             return 0;
         }
     }
 
-
-    async shoppingcart(page) {
+    //Shopping Cart section 
+    async shoppingcart(page: Page) {
+        //expect that the cart item is visible
         await expect(this.cart).toBeVisible();
-        console.log('carrito visible')
+        console.log('visible shopping cart')
         await this.cart.scrollIntoViewIfNeeded();
         await this.cart.click();
+        //Check that the product is visible in the shopping cart section.
         await expect(this.cart_product1).toBeEnabled();
         await this.cart_product1.waitFor({ state: 'visible' })
         await this.cart_product1.scrollIntoViewIfNeeded();
@@ -105,44 +115,44 @@ export class itemsPage {
 
         ];
 
-        // Inicializar una variable para acumular la suma total
-        let sumaTotal = 0;
+        // Initialising a variable to accumulate the sum total
+        let sumTotal = 0;
 
         for (const xpath of xpaths) {
-            const numero = await this.obtenerNumeroElemento(page, xpath);
-            sumaTotal += numero;
+            const number = await this.GetElementNumber(page, xpath);
+            sumTotal += number;
         }
 
-        console.log(`Suma total: ${sumaTotal}`);
+        console.log(`Suma total: ${sumTotal}`);
 
-        // XPath del elemento que muestra el valor de referencia
+        // XPath of the element displaying the reference value
 
-        const xpathValorReferencia = '//span[@id="sc-subtotal-amount-buybox"]//span[@class="a-size-medium a-color-base sc-price sc-white-space-nowrap"]';
-        const elementoValorReferencia = page.locator(xpathValorReferencia);
-        await expect(elementoValorReferencia).toBeVisible();
+        const xpathValueReference = '//span[@id="sc-subtotal-amount-buybox"]//span[@class="a-size-medium a-color-base sc-price sc-white-space-nowrap"]';
+        const elementValueReference = page.locator(xpathValueReference);
+        await expect(elementValueReference).toBeVisible();
 
-        const textoValorReferencia = await elementoValorReferencia.textContent();
-        console.log(`Texto del valor de referencia: '${textoValorReferencia}'`);
+        const textValueReference = await elementValueReference.textContent();
+        console.log(`Texto del valor de referencia: '${textValueReference}'`);
 
-        if (textoValorReferencia && textoValorReferencia.trim() !== '') {
-            const numeroValorReferenciaLimpio = textoValorReferencia.replace(/[^\d.,-]/g, '');
-            const numeroValorReferencia = parseFloat(numeroValorReferenciaLimpio);
+        if (textValueReference && textValueReference.trim() !== '') {
+            const cleanReferenceValueNumber = textValueReference.replace(/[^\d.,-]/g, '');
+            const referenceValueNumber = parseFloat(cleanReferenceValueNumber);
 
-            //isNaN intenta convertir el parámetro pasado a un número
-            if (!isNaN(numeroValorReferencia)) {
-                console.log(`Número del valor de referencia: ${numeroValorReferencia}`);
+            //isNaN tries to convert the parameter passed to a number
+            if (!isNaN(referenceValueNumber)) {
+                console.log(`Número del valor de referencia: ${referenceValueNumber}`);
 
-                // Comparar la suma total con el valor de referencia
-                if (Math.abs(sumaTotal - numeroValorReferencia) < 0.01) { // Usando una tolerancia para errores de precisión
-                    console.log('La suma total coincide con el valor de referencia.');
+                // Compare the total sum with the reference value
+                if (Math.abs(sumTotal - referenceValueNumber) < 0.01) { // Using a tolerance for precision errors
+                    console.log('The total sum coincides with the reference value.');
                 } else {
-                    console.log('La suma total no coincide con el valor de referencia.');
+                    console.log('The total sum does not match the reference value.');
                 }
             } else {
-                console.error('Error al convertir el valor de referencia a un número.');
+                console.error('Error converting the reference value to a number.');
             }
         } else {
-            console.error('No se recuperó el texto del valor de referencia o está vacío.');
+            console.error('The reference value text was not retrieved or is empty.');
         }
     }
 
@@ -152,15 +162,15 @@ export class itemsPage {
         for (const item of data.items) {
             const itemlocatordelete = selectorsproducts.getItemLocatorDelete(item)
             
-            // Eliminar el producto
+            // Delete product
             await itemlocatordelete.scrollIntoViewIfNeeded();
             await expect(itemlocatordelete).toBeVisible();
             await itemlocatordelete.waitFor({ state: 'visible' });
             await itemlocatordelete.click();
             await this.page.waitForTimeout(3000);
-            console.log('producto eliminado')
+            console.log('product deleted')
 
-            console.log(`Item "${item}" eliminado correctamente`);
+            console.log(`Item "${item}" deleted correctly`);
         }
     }
 
